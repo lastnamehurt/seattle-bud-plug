@@ -97,7 +97,7 @@ const DataTable = () => {
   }, [data]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/deals")
+    fetch("https://your-seattle-plug.herokuapp.com/api/deals")
       .then((response) => response.json())
       .then((data) => {
         setData(data);
