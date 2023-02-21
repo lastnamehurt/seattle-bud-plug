@@ -97,7 +97,8 @@ const DataTable = () => {
   }, [data]);
 
   useEffect(() => {
-    fetch("https://your-seattle-plug.herokuapp.com/api/deals", { mode: "cors" })
+    fetch("https://your-seattle-plug.herokuapp.com/api/deals/cached", { mode: "cors" })
+    // fetch("http://localhost:8000/api/deals", { mode: "cors" })
       .then((response) => response.json())
       .then((data) => {
         setData(data);
