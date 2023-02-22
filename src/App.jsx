@@ -1,10 +1,8 @@
 import React from "react";
 import DataTable from "./components/DataTable";
-import MyFlexLayoutGrid from "./components/FlexLayoutGrid";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
-import { Roboto } from "@fontsource/roboto";
 
 const App = () => {
   const theme = createTheme({
