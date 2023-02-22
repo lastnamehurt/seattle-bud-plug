@@ -8,7 +8,10 @@ local-build:
 
 # Build the app
 build:
-	docker build -t blerdeyeview/seattlebudplug .
+	docker buildx build --platform linux/amd64 -t seattle-bud-plug .
+
+tag:
+	docker tag seattle-bud-plug registry.heroku.com/seattle-bud-plug/web
 
 # Start the app
 start:
@@ -36,11 +39,11 @@ docker-pull:
 
 # Push to Heroku
 heroku-push:
-	heroku container:push web
+	docker push registry.heroku.com/seattle-bud-plug/web
 
 # Release to Heroku
 heroku-push:
-	heroku container:release web
+	heroku container:release web -a seattle-bud-plug
 
 # Pull from Heroku
 heroku-pull:
@@ -55,3 +58,6 @@ github-push:
 # Pull from GitHub
 github-pull:
 	git pull origin HEAD
+
+logs:
+	heroku logs -t -a seattle-bud-plug
