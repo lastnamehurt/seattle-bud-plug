@@ -15,6 +15,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import Fuse from "fuse.js";
+import Filter from "./Filter";
 
 const DataTable = () => {
   const [data, setData] = useState([]);
@@ -66,7 +67,7 @@ const DataTable = () => {
 
   useEffect(() => {
     const options = {
-      keys: ["name"],
+      keys: ["name", "brand", "category", "type"],
       includeScore: true,
       threshold: 0.3,
     };
@@ -94,10 +95,19 @@ const DataTable = () => {
   };
 
   const sortedData = filteredData.sort((a, b) => {
-    const productA = a;
-    const productB = b;
-    const valueA = productA[sortColumn];
-    const valueB = productB[sortColumn];
+    const valueA =
+      typeof a[sortColumn] === "number"
+        ? a[sortColumn]
+        : typeof a[sortColumn] === "string"
+        ? Number(a[sortColumn].replace(/[^0-9.-]+/g, ""))
+        : a[sortColumn];
+    const valueB =
+      typeof b[sortColumn] === "number"
+        ? b[sortColumn]
+        : typeof b[sortColumn] === "string"
+        ? Number(b[sortColumn].replace(/[^0-9.-]+/g, ""))
+        : b[sortColumn];
+
     if (valueA < valueB) {
       return sortOrder === "asc" ? -1 : 1;
     } else if (valueA > valueB) {
@@ -135,12 +145,15 @@ const DataTable = () => {
 
   return (
     <div>
+      {/* <Filter data={data} onFilterChange={setFilteredData} /> */}
+
       <div style={{ marginBottom: "16px" }}>
         <TextField
           type='text'
           id='searchInput'
-          placeholder='Enter search term'
+          placeholder='Search by strain, category, type...'
           onChange={handleFilterChange}
+          style={{ width: "100%", fontSize: "1.2rem", textAlign: "center" }}
         />
       </div>
       {loading ? (
@@ -195,5 +208,14 @@ const DataTable = () => {
     </div>
   );
 };
+const DataTableContainer = () => {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      {/* <Filter data={data} onFilterChange={setFilteredData} /> */}
+      <DataTable />
+    </div>
+  );
+};
 
-export default DataTable;
+export default DataTableContainer;
+// export default DataTable;
