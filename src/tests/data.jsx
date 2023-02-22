@@ -1,4 +1,4 @@
-const data = [
+const testData = [
   {
     "Galactic Glue": {
       brand: "Artizen",
@@ -222,4 +222,4 @@ const data = [
   },
 ];
 
-export default data;
+export default testData;

@@ -1,6 +1,6 @@
 import React from "react";
-import DataTable from "./DataTable";
-import data from "./data";
+import DataTable from "./components/DataTable";
+import MyFlexLayoutGrid from "./components/FlexLayoutGrid";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
@@ -64,7 +64,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       {/* <>Kemp's Cannabis Deals</h1> */}
-      <DataTable data={data} />
+      <DataTable />
     </ThemeProvider>
   );
 };

@@ -23,6 +23,12 @@ const DataTable = () => {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [displayedData, setDisplayedData] = useState([]);
+  const [filters, setFilters] = useState({
+    strain: "",
+    brand: "",
+    category: "",
+    type: "",
+  });
 
   useEffect(() => {
     let newData = sortedData;
@@ -97,8 +103,10 @@ const DataTable = () => {
   }, [data]);
 
   useEffect(() => {
-    fetch("https://your-seattle-plug.herokuapp.com/api/deals/cached", { mode: "cors" })
-    // fetch("http://localhost:8000/api/deals", { mode: "cors" })
+    fetch("https://your-seattle-plug.herokuapp.com/api/deals/cached", {
+      mode: "cors",
+    })
+      // fetch("http://localhost:8000/api/deals", { mode: "cors" })
       .then((response) => response.json())
       .then((data) => {
         setData(data);
@@ -130,6 +138,42 @@ const DataTable = () => {
     }
   }, [sortColumn, sortOrder, sortedAndFilteredData, data]);
 
+  function FilterComponent({ filters, setFilters }) {
+    const handleFilterChange = (event) => {
+      const { name, value } = event.target;
+      setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+    };
+
+    return (
+      <div>
+        <TextField
+          label='Strain'
+          name='strain'
+          value={filters.brand}
+          onChange={handleFilterChange}
+        />
+        <TextField
+          label='Brand'
+          name='brand'
+          value={filters.brand}
+          onChange={handleFilterChange}
+        />
+        <TextField
+          label='Category'
+          name='category'
+          value={filters.category}
+          onChange={handleFilterChange}
+        />
+        <TextField
+          label='Type'
+          name='type'
+          value={filters.type}
+          onChange={handleFilterChange}
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div style={{ marginBottom: "16px" }}>
@@ -147,6 +191,8 @@ const DataTable = () => {
         </div>
       ) : (
         <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
+          <FilterComponent filters={filters} setFilters={setFilters} />
+
           <Table style={{ minWidth: 650 }} aria-label='simple table'>
             <TableHead>
               <TableRow>
@@ -198,52 +244,62 @@ const DataTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedAndFilteredData.map((product) => {
-                const productName = Object.keys(product)[0];
-                const productDetails = product[productName];
-                return (
-                  <TableRow key={uuidv4()}>
-                    <TableCell style={tdStyles}>
-                      {productName}
-                      <a
-                        href={productDetails.url}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                      >
-                        <FontAwesomeIcon
-                          icon={faExternalLinkAlt}
-                          style={thStyles.icon}
-                        />
-                      </a>
-                    </TableCell>
+              {sortedAndFilteredData
+                .filter((product) => {
+                  const productDetails = Object.values(product)[0];
+                  return (
+                    productDetails.brand.includes(filters.brand) &&
+                    productDetails.brand.includes(filters.brand) &&
+                    productDetails.category.includes(filters.category) &&
+                    productDetails.type.includes(filters.type)
+                  );
+                })
+                .map((product) => {
+                  const productName = Object.keys(product)[0];
+                  const productDetails = product[productName];
+                  return (
+                    <TableRow key={uuidv4()}>
+                      <TableCell style={tdStyles}>
+                        {productName}
+                        <a
+                          href={productDetails.url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                        >
+                          <FontAwesomeIcon
+                            icon={faExternalLinkAlt}
+                            style={thStyles.icon}
+                          />
+                        </a>
+                      </TableCell>
 
-                    <TableCell style={tdStyles}>
-                      {productDetails.brand}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.price}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.amount_in_stock}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.thc_percentage}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.cbd_percentage}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.weight}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.category}
-                    </TableCell>
-                    <TableCell style={tdStyles}>
-                      {productDetails.type}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      <TableCell style={tdStyles}>
+                        {productDetails.brand}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.price}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.amount_in_stock}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.thc_percentage}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.cbd_percentage}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.weight}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.category}
+                      </TableCell>
+                      <TableCell style={tdStyles}>
+                        {productDetails.type}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
