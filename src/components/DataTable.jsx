@@ -51,7 +51,7 @@ const DataTable = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setData(formattedData);
+        setData(data);
         setLoading(false);
       })
       .catch((error) => {
