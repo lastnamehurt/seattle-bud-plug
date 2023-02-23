@@ -45,7 +45,7 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    fetch("https://api.seattlebudplug.com/v1/products/cached", {
+    fetch("https://api.seattlebudplug.com/v1/products", {
       mode: "cors",
     })
       .then((response) => response.json())
