@@ -1,0 +1,9 @@
+build:
+  docker:
+    web: Dockerfile
+
+  config:
+    YARN_CACHE_FOLDER: /cache/yarn
+
+run:
+  web: yarn start
