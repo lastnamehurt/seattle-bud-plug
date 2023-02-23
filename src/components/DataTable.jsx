@@ -18,7 +18,7 @@ import Fuse from "fuse.js";
 import Filter from "./Filter";
 
 const DataTable = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -53,9 +53,9 @@ const DataTable = () => {
         console.log(data);
         const formattedData = Object.entries(data).reduce(
           (acc, [key, value]) => {
-            const formattedValue = value.reduce((innerAcc, item) => {
-              // Your inner reduce function logic here
-              return innerAcc;
+            const formattedValue = value.map((item) => {
+              // inner reduce function logic
+              return item;
             }, []);
             acc[key] = formattedValue;
             return acc;
