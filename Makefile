@@ -42,7 +42,7 @@ heroku-push:
 	docker push registry.heroku.com/seattle-bud-plug/web
 
 # Release to Heroku
-heroku-push:
+heroku-release:
 	heroku container:release web -a seattle-bud-plug
 
 # Pull from Heroku
