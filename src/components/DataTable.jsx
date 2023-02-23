@@ -51,11 +51,17 @@ const DataTable = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        const formattedData = data.reduce((acc, item) => {
-          const key = Object.keys(item)[0];
-          acc[key] = item[key];
-          return acc;
-        }, {});
+        const formattedData = Object.entries(data).reduce(
+          (acc, [key, value]) => {
+            const formattedValue = value.reduce((innerAcc, item) => {
+              // Your inner reduce function logic here
+              return innerAcc;
+            }, []);
+            acc[key] = formattedValue;
+            return acc;
+          },
+          {}
+        );
         setData(formattedData);
         setLoading(false);
       })
