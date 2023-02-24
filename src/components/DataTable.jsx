@@ -51,7 +51,12 @@ const DataTable = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setData(data);
+        const formattedData = data.reduce((acc, item) => {
+          const key = Object.keys(item)[0];
+          acc[key] = item[key];
+          return acc;
+        }, {});
+        setData(formattedData);
         setLoading(false);
       })
       .catch((error) => {
@@ -71,7 +76,6 @@ const DataTable = () => {
       searchTerm === ""
         ? Object.values(data)
         : fuse.search(searchTerm).map((result) => result.item);
-    setFilteredData(filtered);
     setFilteredData(filtered);
   }, [data, searchTerm]);
 
@@ -178,25 +182,27 @@ const DataTable = () => {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {sortedData.map((product) => (
-                <TableRow key={uuidv4()}>
-                  {columns.map((column) => (
-                    <React.Fragment key={column.field}>
-                      {column.field === "name" ? (
-                        column.render(product)
-                      ) : column.field === "price" ? (
-                        column.render(product)
-                      ) : (
-                        <TableCell key={column.field}>
-                          {product[column.field]}
-                        </TableCell>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
+            {filteredData.length > 0 && (
+              <TableBody>
+                {filteredData.map((product) => (
+                  <TableRow key={uuidv4()}>
+                    {columns.map((column) => (
+                      <React.Fragment key={column.field}>
+                        {column.field === "name" ? (
+                          column.render(product)
+                        ) : column.field === "price" ? (
+                          column.render(product)
+                        ) : (
+                          <TableCell key={column.field}>
+                            {product[column.field]}
+                          </TableCell>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       )}
