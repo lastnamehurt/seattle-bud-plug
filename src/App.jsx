@@ -2,7 +2,6 @@ import React from "react";
 import DataTable from "./components/DataTable";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-import { CssBaseline } from "@material-ui/core";
 
 const App = () => {
   const theme = createTheme({

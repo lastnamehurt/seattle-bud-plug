@@ -30,7 +30,6 @@ compose:
 
 # Push to Docker
 docker-push:
-	docker tag . blerdeyeview/seattlebudplug
 	docker push blerdeyeview/seattlebudplug
 
 # Pull from Docker

@@ -45,7 +45,8 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    fetch("https://api.seattlebudplug.com/v1/products", {
+    // fetch("https://api.seattlebudplug.com/v1/products", {
+    fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
       mode: "cors",
     })
       .then((response) => response.json())
@@ -94,14 +95,14 @@ const DataTable = () => {
       typeof a[sortColumn] === "number"
         ? a[sortColumn]
         : typeof a[sortColumn] === "string"
-        ? Number(a[sortColumn].replace(/[^0-9.-]+/g, ""))
-        : a[sortColumn];
+          ? Number(a[sortColumn].replace(/[^0-9.-]+/g, ""))
+          : a[sortColumn];
     const valueB =
       typeof b[sortColumn] === "number"
         ? b[sortColumn]
         : typeof b[sortColumn] === "string"
-        ? Number(b[sortColumn].replace(/[^0-9.-]+/g, ""))
-        : b[sortColumn];
+          ? Number(b[sortColumn].replace(/[^0-9.-]+/g, ""))
+          : b[sortColumn];
 
     if (valueA < valueB) {
       return sortOrder === "asc" ? -1 : 1;
