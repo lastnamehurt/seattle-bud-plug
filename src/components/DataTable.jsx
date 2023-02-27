@@ -18,7 +18,7 @@ import Fuse from "fuse.js";
 import Filter from "./Filter";
 
 const DataTable = () => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -46,7 +46,8 @@ const DataTable = () => {
 
   useEffect(() => {
     // fetch("https://api.seattlebudplug.com/v1/products", {
-    fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
+    // fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
+    fetch("http://localhost:8000/v1/products", {
       mode: "cors",
     })
       .then((response) => response.json())
@@ -67,14 +68,16 @@ const DataTable = () => {
       includeScore: true,
       threshold: 0.3,
     };
-    const fuse = new Fuse(Object.values(data), options);
-    const filtered =
-      searchTerm === ""
-        ? Object.values(data)
-        : fuse.search(searchTerm).map((result) => result.item);
-    setFilteredData(filtered);
-    setFilteredData(filtered);
+    if (data.length > 0) {
+      const fuse = new Fuse(Object.values(data), options);
+      const filtered =
+        searchTerm === ""
+          ? Object.values(data)
+          : fuse.search(searchTerm).map((result) => result.item);
+      setFilteredData(filtered);
+    }
   }, [data, searchTerm]);
+
 
   const handleSort = (column) => {
     if (sortColumn === column) {
@@ -112,6 +115,7 @@ const DataTable = () => {
     return 0;
   });
 
+
   const columns = [
     {
       field: "name",
@@ -137,6 +141,11 @@ const DataTable = () => {
     { field: "weight", label: "Weight" },
     { field: "category", label: "Category" },
     { field: "type", label: "Type" },
+    {
+      field: "location",
+      label: "Location",
+      render: (product) => <TableCell>{product.location}</TableCell>,
+    },
   ];
 
   return (
@@ -180,23 +189,24 @@ const DataTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedData.map((product) => (
+              {sortedData.map((item) => (
                 <TableRow key={uuidv4()}>
                   {columns.map((column) => (
                     <React.Fragment key={column.field}>
                       {column.field === "name" ? (
-                        column.render(product)
+                        column.render(Object.values(item)[0])
                       ) : column.field === "price" ? (
-                        column.render(product)
+                        column.render(Object.values(item)[0])
                       ) : (
                         <TableCell key={column.field}>
-                          {product[column.field]}
+                          {Object.values(item)[0][column.field]}
                         </TableCell>
                       )}
                     </React.Fragment>
                   ))}
                 </TableRow>
               ))}
+
             </TableBody>
           </Table>
         </TableContainer>
@@ -214,4 +224,4 @@ const DataTableContainer = () => {
 };
 
 export default DataTableContainer;
-// export default DataTable;
+
