@@ -45,9 +45,9 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    // fetch("https://api.seattlebudplug.com/v1/products", {
-    // fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
-    fetch("http://localhost:8000/v1/products", {
+    fetch("https://api.seattlebudplug.com/v1/products", {
+      // fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
+      // fetch("http://localhost:8000/v1/products", {
       mode: "cors",
     })
       .then((response) => response.json())
