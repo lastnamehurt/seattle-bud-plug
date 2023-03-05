@@ -1,227 +1,175 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableSortLabel,
   TableRow,
   Paper,
   TextField,
-  CircularProgress,
-} from "@material-ui/core";
-import Fuse from "fuse.js";
-import Filter from "./Filter";
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { TableSortLabel } from '@material-ui/core';
+
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    width: '50%' // add this line to set the width to 100%
+  },
+  searchInput: {
+    width: '50%' // add this line to set the width to 100%
+  }
+}));
 
 const DataTable = () => {
+  const classes = useStyles();
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
-  const tdStyles = {
-    padding: "12px 16px",
-    textAlign: "left",
-    borderBottom: "1px solid #ddd",
-  };
-
-  const thStyles = {
-    padding: "12px 16px",
-    textAlign: "left",
-    backgroundColor: "#f2f2f2",
-    color: "#444",
-    fontWeight: "bold",
-    cursor: "pointer",
-    icon: {
-      marginLeft: "10px",
-      color: "#ccc",
-    },
-  };
+  const [sortedData, setSortedData] = useState([]);
+  const [sortColumn, setSortColumn] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('All');
+  const categories = ['All', 'Flower', 'Concentrate', 'Edible', 'Preroll', 'Vapor'];
 
   useEffect(() => {
-    fetch("https://api.seattlebudplug.com/v1/products", {
-      // fetch("https://your-seattle-plug.herokuapp.com/v1/products", {
-      // fetch("http://localhost:8000/v1/products", {
-      mode: "cors",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
+    // fetch data from API and update state
+    const fetchData = async () => {
+      const response = await fetch('https://api.seattlebudplug.com/v1/products');
+      const data = await response.json();
+      setData(data);
+    };
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    const options = {
-      keys: ["name", "brand", "category", "type"],
-      includeScore: true,
-      threshold: 0.3,
-    };
-    if (data.length > 0) {
-      const fuse = new Fuse(Object.values(data), options);
-      const filtered =
-        searchTerm === ""
-          ? Object.values(data)
-          : fuse.search(searchTerm).map((result) => result.item);
-      setFilteredData(filtered);
-    }
-  }, [data, searchTerm]);
-
-
-  const handleSort = (column) => {
-    if (sortColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortOrder("asc");
-    }
-  };
-
-  const handleFilterChange = (event) => {
-    const searchTerm = event.target.value;
-    setSearchTerm(searchTerm);
-  };
-
-  const sortedData = filteredData.sort((a, b) => {
-    const valueA =
-      typeof a[sortColumn] === "number"
-        ? a[sortColumn]
-        : typeof a[sortColumn] === "string"
-          ? Number(a[sortColumn].replace(/[^0-9.-]+/g, ""))
-          : a[sortColumn];
-    const valueB =
-      typeof b[sortColumn] === "number"
-        ? b[sortColumn]
-        : typeof b[sortColumn] === "string"
-          ? Number(b[sortColumn].replace(/[^0-9.-]+/g, ""))
-          : b[sortColumn];
-
-    if (valueA < valueB) {
-      return sortOrder === "asc" ? -1 : 1;
-    } else if (valueA > valueB) {
-      return sortOrder === "asc" ? 1 : -1;
-    }
-    return 0;
-  });
-
-
   const columns = [
-    {
-      field: "name",
-      label: "Strain",
-      render: (product) => (
-        <TableCell style={tdStyles}>
-          {product.name}
-          <a href={product.url} target='_blank' rel='noopener noreferrer'>
-            <FontAwesomeIcon icon={faExternalLinkAlt} style={thStyles.icon} />
-          </a>
-        </TableCell>
-      ),
-    },
-    { field: "brand", label: "Brand" },
-    {
-      field: "price",
-      label: "Price",
-      render: (product) => <TableCell>${product.price}</TableCell>,
-    },
-    { field: "amount_in_stock", label: "Amount in Stock" },
-    { field: "thc_percentage", label: "THC Percentage" },
-    { field: "cbd_percentage", label: "CBD Percentage" },
-    { field: "weight", label: "Weight" },
-    { field: "category", label: "Category" },
-    { field: "type", label: "Type" },
-    {
-      field: "location",
-      label: "Location",
-      render: (product) => <TableCell>{product.location}</TableCell>,
-    },
+    { field: 'name', label: 'Name' },
+    { field: 'brand', label: 'Brand' },
+    { field: 'price', label: 'Price' },
+    { field: 'amount_in_stock', label: 'Amount in Stock' },
+    { field: 'thc_percentage', label: 'THC Percentage' },
+    { field: 'cbd_percentage', label: 'CBD Percentage' },
+    { field: 'weight', label: 'Weight' },
+    { field: 'category', label: 'Category' },
+    { field: 'type', label: 'Type' },
   ];
 
-  return (
-    <div>
-      {/* <Filter data={data} onFilterChange={setFilteredData} /> */}
+  const getCellValue = (product, field) => {
+    const productData = Object.values(product)[0];
+    if (field === 'price') {
+      return `$${productData[field]}`;
+    }
+    return productData[field];
+  };
 
-      <div style={{ marginBottom: "16px" }}>
-        <TextField
-          type='text'
-          id='searchInput'
-          placeholder='Search by strain, category, type...'
-          onChange={handleFilterChange}
-          style={{ width: "100%", fontSize: "1.2rem", textAlign: "center" }}
-        />
-      </div>
-      {loading ? (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <CircularProgress />
-        </div>
-      ) : (
-        <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.field}
-                    sortDirection={
-                      sortColumn === column.field ? sortOrder : false
-                    }
+  const handleSortClick = (column) => {
+    if (column === sortColumn) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleFilterCategoryChange = (event) => {
+    setFilterCategory(event.target.value);
+  };
+
+  useEffect(() => {
+    // sort data based on current sort column and order
+    const sortData = (column, order) => {
+      const sorted =
+        order === 'asc'
+          ? [...data].sort((a, b) =>
+            getCellValue(a, column) > getCellValue(b, column) ? 1 : -1
+          )
+          : [...data].sort((a, b) =>
+            getCellValue(a, column) < getCellValue(b, column) ? 1 : -1
+          );
+      setSortedData(sorted);
+    };
+    sortData(sortColumn, sortOrder);
+  }, [sortColumn, sortOrder, data]);
+
+  const filteredData =
+    filterCategory === 'All'
+      ? sortedData
+      : sortedData.filter((item) =>
+        Object.values(item)[0].category.includes(filterCategory));
+
+  const searchedData = filteredData.filter((item) =>
+    Object.values(item)[0].name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <>
+      <TextField
+        className={classes.searchInput}
+        label='Search'
+        value={searchTerm}
+        onChange={handleSearchChange}
+        variant='outlined'
+        margin='dense'
+      />
+      <FormControl variant='outlined' className={classes.formControl}>
+        <InputLabel id='category-filter-label'>Category</InputLabel>
+        <Select
+          labelId='category-filter-label'
+          id='category-filter-select'
+          value={filterCategory}
+          onChange={handleFilterCategoryChange}
+          label='Category'
+        >
+          {categories.map((category) => (
+            <MenuItem key={category} value={category}>
+              {category}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell key={column.field}>
+                  <TableSortLabel
+                    active={sortColumn === column.field}
+                    direction={sortOrder}
+                    onClick={() => handleSortClick(column.field)}
                   >
-                    <TableSortLabel
-                      active={sortColumn === column.field}
-                      direction={sortOrder}
-                      onClick={() => handleSort(column.field)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
+                    {column.label}
+                  </TableSortLabel>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {searchedData.map((item) => (
+              <TableRow key={Object.values(item)[0].id}>
+                {columns.map((column) => (
+                  <TableCell key={column.field}>
+                    {getCellValue(item, column.field)}
                   </TableCell>
                 ))}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedData.map((item) => (
-                <TableRow key={uuidv4()}>
-                  {columns.map((column) => (
-                    <React.Fragment key={column.field}>
-                      {column.field === "name" ? (
-                        column.render(Object.values(item)[0])
-                      ) : column.field === "price" ? (
-                        column.render(Object.values(item)[0])
-                      ) : (
-                        <TableCell key={column.field}>
-                          {Object.values(item)[0][column.field]}
-                        </TableCell>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </TableRow>
-              ))}
-
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </div>
-  );
-};
-const DataTableContainer = () => {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      {/* <Filter data={data} onFilterChange={setFilteredData} /> */}
-      <DataTable />
-    </div>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 
-export default DataTableContainer;
+export default DataTable;
 
