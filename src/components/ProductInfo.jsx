@@ -59,8 +59,8 @@ const ProductInfoPopup = ({ product, onClose }) => {
                 <CardMedia
                     component="img"
                     alt={product.name}
-                    // image={product.image}
-                    image="https://olla-product-images.s3.us-west-1.amazonaws.com/airoWAairopodgenericvaporcartridge.jpg"
+                    image={product.image}
+                    // image="https://olla-product-images.s3.us-west-1.amazonaws.com/airoWAairopodgenericvaporcartridge.jpg"
                     className={classes.productImage}
                 />
                 <CardContent className={classes.productInfo}>
