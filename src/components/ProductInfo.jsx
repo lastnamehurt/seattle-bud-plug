@@ -46,7 +46,7 @@ const ProductInfoPopup = ({ product, onClose }) => {
     const classes = useStyles();
 
     const handleOrderNowClick = () => {
-        window.location.href = product.url;
+        window.open(product.url, "_blank");
     };
 
     return (
