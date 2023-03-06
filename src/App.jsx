@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "./components/DataTable";
+import DataTableContainer from "./components/DataTable";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 
@@ -61,7 +61,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       {/* <>Kemp's Cannabis Deals</h1> */}
-      <DataTable />
+      <DataTableContainer />
     </ThemeProvider>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ProductInfoPopup from './ProductInfo'
 import {
   Table,
   TableBody,
@@ -15,18 +16,45 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { TableSortLabel } from '@material-ui/core';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
+library.add(faExternalLinkAlt);
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-    width: '50%' // add this line to set the width to 100%
+    width: '50%'
   },
   searchInput: {
-    width: '50%' // add this line to set the width to 100%
-  }
+    width: '50%'
+  },
+  linkIcon: {
+    marginLeft: "10px",
+    color: "#ccc",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    padding: "5px",
+    cursor: "pointer",
+  },
 }));
+
+const tdStyles = {
+  padding: "12px 16px",
+  textAlign: "left",
+  borderBottom: "1px solid #ddd",
+};
+
+const thStyles = {
+  padding: "12px 16px",
+  textAlign: "left",
+  backgroundColor: "#f2f2f2",
+  color: "#444",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
 
 const DataTable = () => {
   const classes = useStyles();
@@ -37,6 +65,12 @@ const DataTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const categories = ['All', 'Flower', 'Concentrate', 'Edible', 'Preroll', 'Vapor'];
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+
+  const handleRowClick = (product) => {
+    setSelectedProduct(product);
+  };
 
   useEffect(() => {
     // fetch data from API and update state
@@ -49,22 +83,41 @@ const DataTable = () => {
   }, []);
 
   const columns = [
-    { field: 'name', label: 'Name' },
-    { field: 'brand', label: 'Brand' },
-    { field: 'price', label: 'Price' },
-    { field: 'amount_in_stock', label: 'Amount in Stock' },
-    { field: 'thc_percentage', label: 'THC Percentage' },
-    { field: 'cbd_percentage', label: 'CBD Percentage' },
-    { field: 'weight', label: 'Weight' },
-    { field: 'category', label: 'Category' },
-    { field: 'type', label: 'Type' },
+    {
+      field: "name",
+      label: "Product Name",
+      render: (product) => (
+        <TableCell onClick={() => handleCellClick(product)}>
+          <a href={product.url} target="_blank" rel="noopener noreferrer">
+            {product.name}
+            <FontAwesomeIcon icon={faExternalLinkAlt} className={classes.linkIcon} />
+          </a>
+        </TableCell>
+      ),
+    },
+    { field: 'brand', label: 'Brand', width: "10%" },
+    {
+      field: "price",
+      label: "Price",
+      width: "10%",
+      render: (product) => <TableCell onClick={() => handleCellClick(product)}>${product.price}</TableCell>,
+    },
+    { field: 'weight', label: 'Weight', width: "10%" },
+    { field: 'category', label: 'Category', width: "10%" },
+    { field: 'type', label: 'Type', width: "10%" },
+    { field: 'thc_percentage', label: 'THC Percentage', width: "10%" },
+    { field: 'cbd_percentage', label: 'CBD Percentage', width: "10%" },
+    { field: 'amount_in_stock', label: 'Amount in Stock', width: "10%" },
   ];
+
+
 
   const getCellValue = (product, field) => {
     const productData = Object.values(product)[0];
     if (field === 'price') {
       return `$${productData[field]}`;
     }
+
     return productData[field];
   };
 
@@ -76,6 +129,12 @@ const DataTable = () => {
       setSortOrder('asc');
     }
   };
+
+  const handleCellClick = (product) => {
+    setSelectedProduct({ product });
+  };
+
+
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -139,10 +198,12 @@ const DataTable = () => {
       </FormControl>
       <TableContainer component={Paper}>
         <Table>
+          {/* table header */}
           <TableHead>
+            {/* table header row */}
             <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.field}>
+                <TableCell key={column.field} style={{ width: column.width }}>
                   <TableSortLabel
                     active={sortColumn === column.field}
                     direction={sortOrder}
@@ -154,11 +215,17 @@ const DataTable = () => {
               ))}
             </TableRow>
           </TableHead>
+          {/* table body */}
           <TableBody>
+            {/* table rows */}
             {searchedData.map((item) => (
               <TableRow key={Object.values(item)[0].id}>
                 {columns.map((column) => (
-                  <TableCell key={column.field}>
+                  <TableCell
+                    key={column.field}
+                    style={{ width: column.width }}
+                    onClick={() => setSelectedProduct(item)}
+                  >
                     {getCellValue(item, column.field)}
                   </TableCell>
                 ))}
@@ -166,10 +233,26 @@ const DataTable = () => {
             ))}
           </TableBody>
         </Table>
+
+        {selectedProduct && (
+          <ProductInfoPopup
+            product={Object.values(selectedProduct)[0]}
+            onClose={() => setSelectedProduct(null)}
+          />
+        )}
       </TableContainer>
     </>
   );
+}
+// export default DataTable;
+const DataTableContainer = () => {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      {/* <Filter data={data} onFilterChange={setFilteredData} /> */}
+      <DataTable />
+    </div>
+  );
 };
 
-export default DataTable;
+export default DataTableContainer;
 
