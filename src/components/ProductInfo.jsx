@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
 const ProductInfoPopup = ({ product, onClose }) => {
     const classes = useStyles();
 
+    const handleOrderNowClick = () => {
+        window.location.href = product.url;
+    };
+
     return (
         <Modal
             open={true}
@@ -84,7 +88,7 @@ const ProductInfoPopup = ({ product, onClose }) => {
                 </CardContent>
                 <div className={classes.buttonContainer}>
                     <Button onClick={onClose}>Go back</Button>
-                    <Button variant="contained" color="primary">
+                    <Button onClick={handleOrderNowClick} variant="contained" color="primary">
                         Order now
                     </Button>
                 </div>
